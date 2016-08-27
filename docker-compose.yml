@@ -1,0 +1,41 @@
+version: '2'
+services:
+    app:
+        build: ./docker/app
+        volumes:
+            - ./wordpress/themes:/var/www/wp-content/themes
+            - ./wordpress/plugins:/var/www/wp-content/plugins
+            - wpdata:/var/www
+        tty: true
+    wpdb:
+        image: mysql:5.6
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: admin
+    php:
+        build: ./docker/php-fpm
+        expose:
+            - "9000"
+        volumes:
+            - ./wordpress/themes:/var/www/wp-content/themes
+            - ./wordpress/plugins:/var/www/wp-content/plugins
+            - wpdata:/var/www
+        links:
+            - wpdb
+        tty: true
+        environment:
+            XDEBUG_CONFIG: idekey=PHPStorm
+    nginx:
+        build: ./docker/nginx
+        ports:
+            - "8080:80"
+        links:
+            - php
+        volumes:
+            - ./wordpress/themes:/var/www/wp-content/themes
+            - ./wordpress/plugins:/var/www/wp-content/plugins
+            - wpdata:/var/www
+volumes:
+  wpdata:
+    driver: local

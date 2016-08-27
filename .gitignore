@@ -1,0 +1,4 @@
+.idea/
+docker/app/wp-config.php
+wordpress/themes/*
+wordpress/plugins/*
